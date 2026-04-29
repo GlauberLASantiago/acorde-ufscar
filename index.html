@@ -1,0 +1,797 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Acorde UFSCar</title>
+    <!-- Favicon de nota musical incorporado -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+    
+    <style>
+        :root {
+            --primary: #9E1B22; /* Vermelho UFSCar */
+            --bg: #f4f4f9;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --btn-bg: #f0f0f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            padding: 15px;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        .label {
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: block;
+            color: #555;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-grid {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .btn-grid.types {
+            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+        }
+
+        button.type-btn {
+            padding: 14px 5px;
+            border: none;
+            background: var(--btn-bg);
+            color: var(--text-main);
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button.type-btn:active {
+            transform: scale(0.96);
+        }
+
+        button.type-btn.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(158, 27, 34, 0.3);
+        }
+
+        /* ESTILO DO PIANO */
+        .piano-container {
+            position: relative;
+            display: flex;
+            height: 140px;
+            margin-bottom: 24px;
+            border: 2px solid #222;
+            border-radius: 6px;
+            background: #222;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .key-white {
+            flex: 1;
+            background: #fff;
+            border-right: 1px solid #ccc;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 12px;
+            font-weight: 700;
+            color: #333;
+            cursor: pointer;
+            z-index: 1;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .key-white:last-child {
+            border-right: none;
+        }
+
+        .key-white.active {
+            background: #fdf2f2;
+            color: var(--primary);
+            box-shadow: inset 0 -5px 0 var(--primary);
+        }
+
+        .key-black {
+            position: absolute;
+            top: 0;
+            width: 10%; 
+            height: 62%;
+            margin-left: -5%;
+            background: #222;
+            color: #fff;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2;
+            border-radius: 0 0 5px 5px;
+            border: 1px solid #111;
+            border-top: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .key-black.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: #6a1015;
+            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.2);
+        }
+
+        /* RESULTADOS */
+        #result {
+            background: #fdf2f2;
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 6px solid var(--primary);
+            min-height: 80px;
+        }
+
+        .chord-title {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--text-main);
+            font-size: 24px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            border-bottom: 2px solid rgba(158, 27, 34, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .chord-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: normal;
+        }
+
+        .interval-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed rgba(158, 27, 34, 0.1);
+        }
+
+        .interval-row:last-child {
+            border-bottom: none;
+        }
+
+        .interval-name {
+            color: #555;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .interval-note {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary);
+            text-align: right;
+        }
+
+        .error {
+            color: var(--primary);
+            font-size: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .play-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: opacity 0.2s;
+        }
+        .play-btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Acorde UFSCar</h1>
+        <p>Elaborado pelo professor Glauber S.</p>
+    </div>
+
+    <div class="card">
+        <input type="text" id="chordInput" placeholder="Ex: C7, Dó menor, F#m7b5..." autocomplete="off">
+
+        <!-- COMPLEMENTO (TIPO) VEM PRIMEIRO -->
+        <span class="label">1. Tipo de Acorde (Complemento):</span>
+        <div class="btn-grid types" id="type-btns">
+            <!-- Linha 1 -->
+            <button class="type-btn" onclick="setFromBtn(null, '')" data-type="">Maior</button>
+            <button class="type-btn" onclick="setFromBtn(null, '7M')" data-type="7M">7M</button>
+            <button class="type-btn" onclick="setFromBtn(null, '7')" data-type="7">7</button>
+            <button class="type-btn" onclick="setFromBtn(null, '6')" data-type="6">6</button>
+            <button class="type-btn" onclick="setFromBtn(null, '9')" data-type="9">9</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'add9')" data-type="add9">add9</button>
+            
+            <!-- Linha 2 -->
+            <button class="type-btn" onclick="setFromBtn(null, 'm')" data-type="m">m</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm7M')" data-type="m7M">m(7M)</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm7')" data-type="m7">m7</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm6')" data-type="m6">m6</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'dim')" data-type="dim">dim</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'dim7')" data-type="dim7">dim7</button>
+            
+            <!-- Linha 3 -->
+            <button class="type-btn" onclick="setFromBtn(null, 'm7b5')" data-type="m7b5">m7(b5)</button>
+            <button class="type-btn" onclick="setFromBtn(null, '7sus4')" data-type="7sus4">7sus4</button>
+            <button class="type-btn" onclick="setFromBtn(null, '7b9')" data-type="7b9">7(b9)</button>
+            <button class="type-btn" onclick="setFromBtn(null, '7#9')" data-type="7#9">7(#9)</button>
+            <button class="type-btn" onclick="setFromBtn(null, '13')" data-type="13">13</button>
+            <button class="type-btn" onclick="setFromBtn(null, '7b13')" data-type="7b13">7(b13)</button>
+            
+            <!-- Linha 4 -->
+            <button class="type-btn" onclick="setFromBtn(null, 'm11')" data-type="m11">m11</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'sus4')" data-type="sus4">sus4</button>
+            <button class="type-btn" onclick="setFromBtn(null, '7M#11')" data-type="7M#11">7M(#11)</button>
+            <button class="type-btn" onclick="setFromBtn(null, '4')" data-type="4">4</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm7b511')" data-type="m7b511">m7(b5)11</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm9')" data-type="m9">m9</button>
+        </div>
+
+        <!-- FUNDAMENTAL EM FORMATO DE PIANO -->
+        <span class="label">2. Nota Fundamental:</span>
+        <div class="piano-container" id="piano">
+            <!-- Teclas Brancas (14.285% cada) -->
+            <div class="key-white" onclick="setFromBtn('C', null)" data-root="C">C</div>
+            <div class="key-white" onclick="setFromBtn('D', null)" data-root="D">D</div>
+            <div class="key-white" onclick="setFromBtn('E', null)" data-root="E">E</div>
+            <div class="key-white" onclick="setFromBtn('F', null)" data-root="F">F</div>
+            <div class="key-white" onclick="setFromBtn('G', null)" data-root="G">G</div>
+            <div class="key-white" onclick="setFromBtn('A', null)" data-root="A">A</div>
+            <div class="key-white" onclick="setFromBtn('B', null)" data-root="B">B</div>
+            
+            <!-- Teclas Pretas (Posicionadas nas divisas) -->
+            <div class="key-black" style="left: 14.285%;" onclick="handleBlackKey('C#', 'Db')" data-sharp="C#" data-flat="Db">C#</div>
+            <div class="key-black" style="left: 28.571%;" onclick="handleBlackKey('D#', 'Eb')" data-sharp="D#" data-flat="Eb">D#</div>
+            <div class="key-black" style="left: 57.142%;" onclick="handleBlackKey('F#', 'Gb')" data-sharp="F#" data-flat="Gb">F#</div>
+            <div class="key-black" style="left: 71.428%;" onclick="handleBlackKey('G#', 'Ab')" data-sharp="G#" data-flat="Ab">G#</div>
+            <div class="key-black" style="left: 85.714%;" onclick="handleBlackKey('A#', 'Bb')" data-sharp="A#" data-flat="Bb">A#</div>
+        </div>
+
+        <!-- RESULTADO -->
+        <div id="result">
+            <div style="color:var(--text-muted); text-align:center; padding-top: 15px;">Selecione ou digite um acorde acima.</div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // MOTOR DE TEORIA MUSICAL E ENARMONIA EXATA
+        // ==========================================
+        
+        const letters = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+        const letterPitches = [0, 2, 4, 5, 7, 9, 11];
+        const ptBrNotes = { 'C': 'Dó', 'D': 'Ré', 'E': 'Mi', 'F': 'Fá', 'G': 'Sol', 'A': 'Lá', 'B': 'Si' };
+
+        // Fórmulas ordenadas da mais grave (Fundamental) para a mais aguda.
+        // O layout renderiza agora de baixo para cima.
+        const formulas = {
+            '': { name: 'Maior', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'}
+            ]},
+            'm': { name: 'Menor', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'}
+            ]},
+            '7': { name: 'Dominante (7ª)', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'}
+            ]},
+            '7M': { name: 'Maior com 7ª Maior', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 11, letters: 6, label: 'Sétima Maior (7M)'}
+            ]},
+            'm7': { name: 'Menor com 7ª', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'}
+            ]},
+            'm7M': { name: 'Menor com 7ª Maior', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 11, letters: 6, label: 'Sétima Maior (7M)'}
+            ]},
+            'dim': { name: 'Tríade Diminuta', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 6, letters: 4, label: 'Quinta Diminuta (5d)'}
+            ]},
+            'dim7': { name: 'Tétrade Diminuta (dim7)', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 6, letters: 4, label: 'Quinta Diminuta (5d)'},
+                {semis: 9, letters: 6, label: 'Sétima Diminuta (7d)'} 
+            ]},
+            'm7b5': { name: 'Meio Diminuto', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 6, letters: 4, label: 'Quinta Diminuta (5d)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'}
+            ]},
+            '6': { name: 'Maior com 6ª', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 9, letters: 5, label: 'Sexta Maior (6M)'}
+            ]},
+            'm6': { name: 'Menor com 6ª', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 9, letters: 5, label: 'Sexta Maior (6M)'}
+            ]},
+            '13': { name: 'Dominante 13ª', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'},
+                {semis: 14, letters: 1, label: 'Nona Maior (9M)'},
+                {semis: 21, letters: 5, label: 'Décima Terceira Maior (13M)'}
+            ]},
+            'sus4': { name: 'Suspenso (4ª)', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 5, letters: 3, label: 'Quarta Justa (4J)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'}
+            ]},
+            '7sus4': { name: 'Dominante 7ª Sus4', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 5, letters: 3, label: 'Quarta Justa (4J)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'}
+            ]},
+            '9': { name: 'Dominante 9ª', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'},
+                {semis: 14, letters: 1, label: 'Nona Maior (9M)'}
+            ]},
+            'add9': { name: 'Maior com 9ª Adicionada', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 14, letters: 1, label: 'Nona Maior (9M)'}
+            ]},
+            '7b9': { name: 'Dominante 7ª com 9ª Menor', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'},
+                {semis: 13, letters: 1, label: 'Nona Menor (9m)'}
+            ]},
+            '7#9': { name: 'Dominante 7ª com 9ª Aumentada', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'},
+                {semis: 15, letters: 2, label: 'Décima Menor (10m)'}
+            ]},
+            '7b13': { name: 'Dominante 7ª com 13ª Menor', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'},
+                {semis: 20, letters: 5, label: 'Décima Terceira Menor (13m)'}
+            ]},
+            'm11': { name: 'Menor 11ª', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'},
+                {semis: 14, letters: 1, label: 'Nona Maior (9M)'},
+                {semis: 17, letters: 3, label: 'Décima Primeira Justa (11J)'}
+            ]},
+            '7M#11': { name: 'Maior com 7ª Maior e 11ª Aumentada', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 11, letters: 6, label: 'Sétima Maior (7M)'},
+                {semis: 14, letters: 1, label: 'Nona Maior (9M)'},
+                {semis: 18, letters: 3, label: 'Décima Primeira Aumentada (#11)'}
+            ]},
+            '4': { name: 'Maior com 4ª Adicionada', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 5, letters: 3, label: 'Quarta Justa (4J)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'}
+            ]},
+            'm7b511': { name: 'Meio Diminuto com 11ª', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 6, letters: 4, label: 'Quinta Diminuta (5d)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'},
+                {semis: 17, letters: 3, label: 'Décima Primeira Justa (11J)'}
+            ]},
+            'm9': { name: 'Menor 9ª', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 10, letters: 6, label: 'Sétima Menor (7m)'},
+                {semis: 14, letters: 1, label: 'Nona Maior (9M)'}
+            ]}
+        };
+
+        const rootMap = {
+            'c':'C', 'dó':'C', 'do':'C',
+            'c#':'C#', 'dó#':'C#', 'do#':'C#',
+            'db':'Db', 'réb':'Db', 'reb':'Db',
+            'd':'D', 'ré':'D', 're':'D',
+            'd#':'D#', 'ré#':'D#', 're#':'D#',
+            'eb':'Eb', 'mib':'Eb',
+            'e':'E', 'mi':'E',
+            'f':'F', 'fá':'F', 'fa':'F',
+            'f#':'F#', 'fá#':'F#', 'fa#':'F#',
+            'gb':'Gb', 'solb':'Gb',
+            'g':'G', 'sol':'G',
+            'g#':'G#', 'sol#':'G#',
+            'ab':'Ab', 'láb':'Ab', 'lab':'Ab',
+            'a':'A', 'lá':'A', 'la':'A',
+            'a#':'A#', 'lá#':'A#', 'la#':'A#',
+            'bb':'Bb', 'sib':'Bb',
+            'b':'B', 'si':'B',
+            'cb':'Cb', 'dób':'Cb', 'dob':'Cb'
+        };
+
+        let currentRoot = '';
+        let currentType = '';
+
+        // --- SISTEMA DE ÁUDIO (Web Audio API) ---
+        let audioCtx;
+        let masterCompressor;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Compressor master atua como um "limitador" de estúdio para evitar clipping
+                masterCompressor = audioCtx.createDynamicsCompressor();
+                masterCompressor.threshold.setValueAtTime(-10, audioCtx.currentTime);
+                masterCompressor.knee.setValueAtTime(15, audioCtx.currentTime);
+                masterCompressor.ratio.setValueAtTime(12, audioCtx.currentTime);
+                masterCompressor.attack.setValueAtTime(0.003, audioCtx.currentTime);
+                masterCompressor.release.setValueAtTime(0.25, audioCtx.currentTime);
+
+                masterCompressor.connect(audioCtx.destination);
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playCurrentChord() {
+            if (!currentRoot || !formulas[currentType]) return;
+            initAudio();
+
+            const formula = formulas[currentType];
+            
+            // Notas base em MIDI para manter os acordes numa oitava agradável
+            // G, G#, A, A#, B e equivalentes subiram uma oitava (+12)
+            const rootPitches = {
+                'C': 48, 'C#': 49, 'Db': 49, 'D': 50, 'D#': 51, 'Eb': 51, 'E': 52,
+                'F': 53, 'F#': 54, 'Gb': 54, 'G': 55, 'G#': 56, 'Ab': 56, 'A': 57,
+                'A#': 58, 'Bb': 58, 'B': 59, 'Cb': 59
+            };
+
+            const baseMidi = rootPitches[currentRoot];
+            const now = audioCtx.currentTime;
+            const arpeggioDelay = 0.05; // 50ms de atraso entre cada nota (Efeito de dedilhado/arpejo)
+            
+            // Divide o volume máximo pelo número de notas do acorde para evitar que a soma estoure 1.0
+            const peakGain = 0.6 / formula.intervals.length;
+            
+            formula.intervals.forEach((interval, index) => {
+                const midiNote = baseMidi + interval.semis;
+                const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+                const noteStart = now + (index * arpeggioDelay); // Aplica o atraso baseado na ordem da nota
+                
+                const osc = audioCtx.createOscillator();
+                const filter = audioCtx.createBiquadFilter(); // Filtro para deixar o som mais aveludado
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'triangle'; // Base do timbre
+                
+                // Configuração do filtro passa-baixa (corta agudos estridentes)
+                filter.type = 'lowpass';
+                filter.frequency.value = 800; // Ajustado para não abafar demais
+                
+                osc.frequency.value = freq;
+                
+                // Envelope ADSR suave (ataque rápido, decaimento longo)
+                gain.gain.setValueAtTime(0, noteStart);
+                gain.gain.linearRampToValueAtTime(peakGain, noteStart + 0.08); // Usa o peakGain dinâmico calculado
+                gain.gain.exponentialRampToValueAtTime(0.001, noteStart + 3.0); // Decay
+                
+                // Conexões de áudio: Oscilador -> Filtro -> Volume -> Compressor (Master) -> Saída
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(masterCompressor);
+                
+                osc.start(noteStart);
+                osc.stop(noteStart + 3.0);
+            });
+        }
+        // ----------------------------------------
+
+        function getCorrectNoteSpelling(rootStr, intervalSemitones, intervalLetters) {
+            let rootLetterChar = rootStr.charAt(0).toUpperCase();
+            let rootLetterIdx = letters.indexOf(rootLetterChar);
+            let rootAccidental = rootStr.substring(1);
+            
+            let rootAccidentalVal = 0;
+            for(let char of rootAccidental) {
+                if (char === '#') rootAccidentalVal++;
+                else if (char === 'b') rootAccidentalVal--;
+            }
+
+            let rootPitch = (letterPitches[rootLetterIdx] + rootAccidentalVal + 120) % 12;
+            let targetLetterIdx = (rootLetterIdx + intervalLetters) % 7;
+            let targetNaturalPitch = letterPitches[targetLetterIdx];
+            let targetPitch = (rootPitch + intervalSemitones + 120) % 12;
+
+            let diff = targetPitch - targetNaturalPitch;
+            if (diff > 6) diff -= 12;
+            if (diff < -6) diff += 12;
+
+            let accidentalStr = '';
+            if (diff > 0) accidentalStr = '#'.repeat(diff);
+            else if (diff < 0) accidentalStr = 'b'.repeat(-diff);
+
+            return letters[targetLetterIdx] + accidentalStr;
+        }
+
+        function formatNoteBR(noteStr) {
+            let letter = noteStr.charAt(0);
+            let acc = noteStr.substring(1);
+            let brLetter = ptBrNotes[letter];
+            return `${brLetter}${acc}`;
+        }
+
+        // ==========================================
+        // CONTROLES DE INTERFACE
+        // ==========================================
+
+        function setFromBtn(root, type) {
+            if (root !== null) currentRoot = root;
+            if (type !== null) currentType = type;
+            
+            if(!currentRoot && type !== null) currentRoot = 'C';
+
+            document.getElementById('chordInput').value = currentRoot + currentType;
+            render();
+            updateActiveButtons();
+            playCurrentChord(); // Toca o acorde automaticamente
+        }
+
+        // Lógica de alternância (Toggle) para as teclas pretas
+        function handleBlackKey(sharp, flat) {
+            // Se a fundamental atual já é o sustenido, ao clicar de novo vai para o bemol
+            if (currentRoot === sharp) {
+                setFromBtn(flat, null);
+            } 
+            // Caso contrário (primeira clicagem ou se estava no bemol), vai para o sustenido
+            else {
+                setFromBtn(sharp, null);
+            }
+        }
+
+        document.getElementById('chordInput').addEventListener('input', function() {
+            let val = this.value.trim().toLowerCase().replace(/\s+/g, '');
+            if(!val) {
+                currentRoot = '';
+                currentType = '';
+                render();
+                updateActiveButtons();
+                return;
+            }
+
+            let rootFound = null;
+            let restFound = '';
+
+            let possibleRoots = Object.keys(rootMap).sort((a,b) => b.length - a.length);
+            for(let pr of possibleRoots) {
+                if(val.startsWith(pr)) {
+                    rootFound = rootMap[pr];
+                    restFound = val.substring(pr.length);
+                    break;
+                }
+            }
+
+            if(rootFound) {
+                currentRoot = rootFound;
+                
+                if(restFound === '' || restFound === 'maior' || restFound === 'maj') currentType = '';
+                else if(restFound === 'm' || restFound === 'menor' || restFound === 'min' || restFound === '-') currentType = 'm';
+                else if(restFound === 'm(7m)' || restFound === 'm7m' || restFound === 'minmaj7') currentType = 'm7M';
+                else if(restFound === '7') currentType = '7';
+                else if(restFound === '7m' || restFound === 'maj7' || restFound === 'm7m') currentType = '7M';
+                else if(restFound === 'm7' || restFound === 'min7' || restFound === '-7') currentType = 'm7';
+                else if(restFound === 'dim' || restFound === '°') currentType = 'dim';
+                else if(restFound === 'dim7' || restFound === '°7') currentType = 'dim7';
+                else if(restFound === 'm7b5' || restFound === 'ø' || restFound === 'm7(b5)') currentType = 'm7b5';
+                else if(restFound === '6') currentType = '6';
+                else if(restFound === 'm6' || restFound === 'min6' || restFound === '-6') currentType = 'm6';
+                else if(restFound === '13') currentType = '13';
+                else if(restFound === 'sus4' || restFound === 'sus') currentType = 'sus4';
+                else if(restFound === '7sus4' || restFound === '7sus') currentType = '7sus4';
+                else if(restFound === '9') currentType = '9';
+                else if(restFound === 'add9') currentType = 'add9';
+                else if(restFound === '7b9' || restFound === 'b9' || restFound === '-9' || restFound === '7(b9)') currentType = '7b9';
+                else if(restFound === '7#9' || restFound === '#9' || restFound === '+9' || restFound === '7(#9)') currentType = '7#9';
+                else if(restFound === '7b13' || restFound === 'b13' || restFound === '-13' || restFound === '7(b13)') currentType = '7b13';
+                else if(restFound === 'm11' || restFound === 'min11' || restFound === '-11') currentType = 'm11';
+                else if(restFound === '7m#11' || restFound === '7m(#11)' || restFound === 'maj7#11' || restFound === 'maj7(#11)') currentType = '7M#11';
+                else if(restFound === '4' || restFound === 'add4') currentType = '4';
+                else if(restFound === 'm7b511' || restFound === 'm7(b5)11' || restFound === 'ø11' || restFound === 'ø(11)') currentType = 'm7b511';
+                else if(restFound === 'm9' || restFound === 'min9' || restFound === '-9') currentType = 'm9';
+                else {
+                    document.getElementById('result').innerHTML = '<div class="error">Complemento não suportado.</div>';
+                    return;
+                }
+                render();
+            } else {
+                document.getElementById('result').innerHTML = '<div class="error">Fundamental não reconhecida.</div>';
+            }
+            updateActiveButtons();
+        });
+
+        function render() {
+            if(!currentRoot) {
+                document.getElementById('result').innerHTML = '<div style="color:var(--text-muted); text-align:center; padding-top: 15px;">Selecione ou digite um acorde acima.</div>';
+                return;
+            }
+
+            let formula = formulas[currentType];
+            let html = `
+                <div class="chord-title">
+                    ${currentRoot}${currentType} 
+                    <span class="chord-subtitle">(${formula.name})</span>
+                    <button class="play-btn" onclick="playCurrentChord()">🔊 Tocar</button>
+                </div>
+                <div class="intervals-container">
+            `;
+
+            // DE BAIXO PARA CIMA: Revertemos o Array para colocar a Fundamental embaixo e a nota mais aguda em cima
+            let reversedIntervals = [...formula.intervals].reverse();
+
+            reversedIntervals.forEach((interval) => {
+                let exactNote = getCorrectNoteSpelling(currentRoot, interval.semis, interval.letters);
+                let formattedDisplay = formatNoteBR(exactNote);
+
+                html += `
+                    <div class="interval-row">
+                        <span class="interval-name">${interval.label}</span>
+                        <span class="interval-note">${formattedDisplay}</span>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            document.getElementById('result').innerHTML = html;
+        }
+
+        function updateActiveButtons() {
+            // Teclas brancas
+            document.querySelectorAll('.key-white').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-root') === currentRoot);
+            });
+            
+            // Teclas pretas
+            document.querySelectorAll('.key-black').forEach(btn => {
+                let sharp = btn.getAttribute('data-sharp');
+                let flat = btn.getAttribute('data-flat');
+                
+                if (currentRoot === sharp || currentRoot === flat) {
+                    btn.classList.add('active');
+                    btn.innerText = currentRoot; // Mostra # ou b na tecla baseado no selecionado
+                } else {
+                    btn.classList.remove('active');
+                    btn.innerText = sharp; // Retorna para visual de sustenido quando inativo (dica visual de 1º clique)
+                }
+            });
+
+            // Botões de Tipo
+            document.querySelectorAll('#type-btns button').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-type') === currentType);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+```
