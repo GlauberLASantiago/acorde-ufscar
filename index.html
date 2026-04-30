@@ -4,8 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Acorde UFSCar</title>
-    <!-- Favicon de nota musical incorporado -->
+    
+    <!-- Configurações PWA e Meta Tags -->
+    <meta name="theme-color" content="#9E1B22">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Acorde">
+    
+    <!-- Favicon e Ícone iOS incorporados -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%239E1B22'/><text y='.75em' x='50%' text-anchor='middle' font-size='70'>🎵</text></svg>">
     
     <style>
         :root {
@@ -54,14 +62,15 @@
 
         .input-wrapper {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             margin-bottom: 24px;
+            flex-wrap: wrap; /* Permite quebrar linha em telas muito pequenas */
         }
 
         .input-wrapper input[type="text"] {
             margin-bottom: 0;
             flex: 1;
-            min-width: 0;
+            min-width: 150px; /* Garante tamanho mínimo para o input */
         }
 
         input[type="text"] {
@@ -97,6 +106,7 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
+            min-height: 56px; /* Mesma altura aproximada do input */
         }
 
         .mode-btn:hover {
@@ -109,6 +119,14 @@
 
         .mode-btn.inverse:hover {
             background: #0d47a1;
+        }
+        
+        .mode-btn.install-btn {
+            background: #2e7d32; /* Verde para instalação */
+        }
+
+        .mode-btn.install-btn:hover {
+            background: #1b5e20;
         }
 
         .label {
@@ -391,13 +409,13 @@
 
     <div class="header">
         <h1>Acorde UFSCar</h1>
-        
     </div>
 
     <div class="card">
         
         <div class="input-wrapper">
             <input type="text" id="chordInput" placeholder="Ex: C7, Dó menor, F#m7b5..." autocomplete="off">
+            <button id="installBtn" class="mode-btn install-btn" style="display: none;" onclick="installPWA()">⬇️ Instalar</button>
             <button id="toggleModeBtn" class="mode-btn" onclick="toggleMode()">🔄 InverterFlux</button>
         </div>
 
@@ -470,6 +488,65 @@
     </div>
 
     <script>
+        // ==========================================
+        // PWA: MANIFEST DINÂMICO E SERVICE WORKER
+        // ==========================================
+        
+        // Criando e injetando o manifest.json dinamicamente para manter o formato em arquivo único
+        const pwaManifest = {
+            name: "Acorde UFSCar",
+            short_name: "Acorde",
+            description: "Dicionário de Acordes e Engenharia Reversa",
+            start_url: window.location.href.split('?')[0], // Inicia na mesma rota livre de queries
+            display: "standalone",
+            background_color: "#f4f4f9",
+            theme_color: "#9E1B22",
+            icons: [{
+                src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎵%3C/text%3E%3C/svg%3E",
+                sizes: "192x192 512x512",
+                type: "image/svg+xml"
+            }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(pwaManifest)], {type: 'application/manifest+json'});
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestUrl}">`);
+
+        // Lógica de captura do evento de Instalação (Add to Home Screen)
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Previne o Chrome de exibir o prompt padrão automaticamente
+            e.preventDefault();
+            // Guarda o evento para acionar posteriormente
+            deferredPrompt = e;
+            // Exibe o botão de instalar no painel
+            const installBtn = document.getElementById('installBtn');
+            if(installBtn) installBtn.style.display = 'flex';
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                // Exibe o prompt de instalação padrão do navegador
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou a instalação do PWA');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBtn').style.display = 'none';
+                });
+            }
+        }
+
+        // SW embutido (necessário em alguns navegadores apenas para acionar a permissão de instalação)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `self.addEventListener('fetch', () => {});`;
+                const blob = new Blob([swCode], {type: 'application/javascript'});
+                navigator.serviceWorker.register(URL.createObjectURL(blob))
+                    .catch((err) => console.log('O Service Worker via Blob pode estar bloqueado neste ambiente (Segurança), mas a instalação via manifest continuará ativa onde suportada.', err));
+            });
+        }
+
         // ==========================================
         // MOTOR DE TEORIA MUSICAL E ENARMONIA EXATA
         // ==========================================
