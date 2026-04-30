@@ -52,13 +52,24 @@
             margin: 0 auto;
         }
 
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .input-wrapper input[type="text"] {
+            margin-bottom: 0;
+            flex: 1;
+            min-width: 0;
+        }
+
         input[type="text"] {
             width: 100%;
             padding: 16px;
             font-size: 18px;
             border: 2px solid #e0e0e0;
             border-radius: 12px;
-            margin-bottom: 24px;
             box-sizing: border-box;
             outline: none;
             transition: border-color 0.3s;
@@ -69,6 +80,35 @@
 
         input[type="text"]:focus {
             border-color: var(--primary);
+        }
+
+        .mode-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .mode-btn:hover {
+            background: #7a151a;
+        }
+
+        .mode-btn.inverse {
+            background: #1565c0; /* Azul do InverterFlux */
+        }
+
+        .mode-btn.inverse:hover {
+            background: #0d47a1;
         }
 
         .label {
@@ -94,8 +134,6 @@
         button.type-btn {
             padding: 14px 5px;
             border: none;
-            background: var(--btn-bg);
-            color: var(--text-main);
             font-size: 15px;
             font-weight: 600;
             border-radius: 10px;
@@ -108,10 +146,32 @@
             transform: scale(0.96);
         }
 
-        button.type-btn.active {
-            background: var(--primary);
+        /* Cores Categoria Menor (Terça Menor) */
+        button.type-btn.minor {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        button.type-btn.minor:hover {
+            background: #c8e6c9;
+        }
+        button.type-btn.minor.active {
+            background: #4caf50;
             color: #fff;
-            box-shadow: 0 4px 10px rgba(158, 27, 34, 0.3);
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Cores Categoria Maior/Outros */
+        button.type-btn.major {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        button.type-btn.major:hover {
+            background: #bbdefb;
+        }
+        button.type-btn.major.active {
+            background: #2196f3;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
         }
 
         /* ESTILO DO PIANO */
@@ -188,6 +248,7 @@
             border-radius: 12px;
             border-left: 6px solid var(--primary);
             min-height: 80px;
+            transition: background-color 0.4s ease, border-color 0.4s ease;
         }
 
         .chord-title {
@@ -212,8 +273,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0;
+            padding: 10px 15px; 
+            margin: 2px 0;
             border-bottom: 1px dashed rgba(158, 27, 34, 0.1);
+            border-radius: 6px;
+            cursor: pointer; 
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .interval-row:hover {
+            background-color: rgba(158, 27, 34, 0.05);
+        }
+        
+        .interval-row:active {
+            transform: scale(0.98);
         }
 
         .interval-row:last-child {
@@ -224,6 +297,7 @@
             color: #555;
             font-size: 14px;
             flex: 1;
+            pointer-events: none; 
         }
 
         .interval-note {
@@ -231,6 +305,7 @@
             font-size: 18px;
             color: var(--primary);
             text-align: right;
+            pointer-events: none;
         }
 
         .error {
@@ -257,56 +332,111 @@
         .play-btn:hover {
             opacity: 0.8;
         }
+
+        /* Estilos específicos do InverterFlux */
+        .function-group {
+            margin-bottom: 12px;
+            background: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #1565c0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .function-group h4 {
+            margin: 0 0 8px 0;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .chord-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .chord-tag {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        /* Estilos do Rodapé */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-bottom: 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: opacity 0.2s;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>Acorde UFSCar</h1>
-        <p>Elaborado pelo professor Glauber Santiago.</p>
+        
     </div>
 
     <div class="card">
-        <input type="text" id="chordInput" placeholder="Ex: C7, Dó menor, F#m7b5..." autocomplete="off">
+        
+        <div class="input-wrapper">
+            <input type="text" id="chordInput" placeholder="Ex: C7, Dó menor, F#m7b5..." autocomplete="off">
+            <button id="toggleModeBtn" class="mode-btn" onclick="toggleMode()">🔄 InverterFlux</button>
+        </div>
 
         <!-- COMPLEMENTO (TIPO) VEM PRIMEIRO -->
-        <span class="label">1. Tipo de Acorde (Complemento):</span>
+        <span class="label" id="type-section-label">1. Tipo de Acorde (Complemento):</span>
         <div class="btn-grid types" id="type-btns">
-            <!-- Linha 1 -->
             <button class="type-btn" onclick="setFromBtn(null, '')" data-type="">Maior</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm')" data-type="m">m</button>
             <button class="type-btn" onclick="setFromBtn(null, '7M')" data-type="7M">7M</button>
             <button class="type-btn" onclick="setFromBtn(null, '7')" data-type="7">7</button>
-            <button class="type-btn" onclick="setFromBtn(null, '6')" data-type="6">6</button>
-            <button class="type-btn" onclick="setFromBtn(null, '9')" data-type="9">9</button>
-            <button class="type-btn" onclick="setFromBtn(null, 'add9')" data-type="add9">add9</button>
-            
-            <!-- Linha 2 -->
-            <button class="type-btn" onclick="setFromBtn(null, 'm')" data-type="m">m</button>
-            <button class="type-btn" onclick="setFromBtn(null, 'm7M')" data-type="m7M">m(7M)</button>
             <button class="type-btn" onclick="setFromBtn(null, 'm7')" data-type="m7">m7</button>
-            <button class="type-btn" onclick="setFromBtn(null, 'm6')" data-type="m6">m6</button>
-            <button class="type-btn" onclick="setFromBtn(null, 'dim')" data-type="dim">dim</button>
-            <button class="type-btn" onclick="setFromBtn(null, 'dim7')" data-type="dim7">dim7</button>
-            
-            <!-- Linha 3 -->
             <button class="type-btn" onclick="setFromBtn(null, 'm7b5')" data-type="m7b5">m7(b5)</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'dim7')" data-type="dim7">dim7</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'dim')" data-type="dim">dim</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'add9')" data-type="add9">add9</button>
+            <button class="type-btn" onclick="setFromBtn(null, '9')" data-type="9">9</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'sus2')" data-type="sus2">sus2</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'sus4')" data-type="sus4">sus4</button>
             <button class="type-btn" onclick="setFromBtn(null, '7sus4')" data-type="7sus4">7sus4</button>
+            <button class="type-btn" onclick="setFromBtn(null, '4')" data-type="4">4</button>
+            <button class="type-btn" onclick="setFromBtn(null, '6')" data-type="6">6</button>
+            <button class="type-btn" onclick="setFromBtn(null, '6/9')" data-type="6/9">6(9)</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'aug')" data-type="aug">+</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'augadd9')" data-type="augadd9">+(add9)</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm7M')" data-type="m7M">m(7M)</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm6')" data-type="m6">m6</button>
             <button class="type-btn" onclick="setFromBtn(null, '7b9')" data-type="7b9">7(b9)</button>
             <button class="type-btn" onclick="setFromBtn(null, '7#9')" data-type="7#9">7(#9)</button>
             <button class="type-btn" onclick="setFromBtn(null, '13')" data-type="13">13</button>
             <button class="type-btn" onclick="setFromBtn(null, '7b13')" data-type="7b13">7(b13)</button>
-            
-            <!-- Linha 4 -->
-            <button class="type-btn" onclick="setFromBtn(null, 'm11')" data-type="m11">m11</button>
-            <button class="type-btn" onclick="setFromBtn(null, 'sus4')" data-type="sus4">sus4</button>
-            <button class="type-btn" onclick="setFromBtn(null, '7M#11')" data-type="7M#11">7M(#11)</button>
-            <button class="type-btn" onclick="setFromBtn(null, '4')" data-type="4">4</button>
-            <button class="type-btn" onclick="setFromBtn(null, 'm7b511')" data-type="m7b511">m7(b5)11</button>
             <button class="type-btn" onclick="setFromBtn(null, 'm9')" data-type="m9">m9</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm6/9')" data-type="m6/9">m6(9)</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm11')" data-type="m11">m11</button>
+            <button class="type-btn" onclick="setFromBtn(null, '7M#11')" data-type="7M#11">7M(#11)</button>
+            <button class="type-btn" onclick="setFromBtn(null, 'm7b511')" data-type="m7b511">m7(b5)11</button>
         </div>
 
         <!-- FUNDAMENTAL EM FORMATO DE PIANO -->
-        <span class="label">2. Nota Fundamental:</span>
+        <span class="label" id="piano-label">2. Nota Fundamental:</span>
         <div class="piano-container" id="piano">
             <!-- Teclas Brancas (14.285% cada) -->
             <div class="key-white" onclick="setFromBtn('C', null)" data-root="C">C</div>
@@ -318,17 +448,25 @@
             <div class="key-white" onclick="setFromBtn('B', null)" data-root="B">B</div>
             
             <!-- Teclas Pretas (Posicionadas nas divisas) -->
-            <div class="key-black" style="left: 14.285%;" onclick="handleBlackKey('C#', 'Db')" data-sharp="C#" data-flat="Db">C#</div>
-            <div class="key-black" style="left: 28.571%;" onclick="handleBlackKey('D#', 'Eb')" data-sharp="D#" data-flat="Eb">D#</div>
-            <div class="key-black" style="left: 57.142%;" onclick="handleBlackKey('F#', 'Gb')" data-sharp="F#" data-flat="Gb">F#</div>
-            <div class="key-black" style="left: 71.428%;" onclick="handleBlackKey('G#', 'Ab')" data-sharp="G#" data-flat="Ab">G#</div>
-            <div class="key-black" style="left: 85.714%;" onclick="handleBlackKey('A#', 'Bb')" data-sharp="A#" data-flat="Bb">A#</div>
+            <div class="key-black" style="left: 14.285%;" onclick="handleBlackKey('C#', 'Db')" data-sharp="C#" data-flat="Db">Db</div>
+            <div class="key-black" style="left: 28.571%;" onclick="handleBlackKey('D#', 'Eb')" data-sharp="D#" data-flat="Eb">Eb</div>
+            <div class="key-black" style="left: 57.142%;" onclick="handleBlackKey('F#', 'Gb')" data-sharp="F#" data-flat="Gb">Gb</div>
+            <div class="key-black" style="left: 71.428%;" onclick="handleBlackKey('G#', 'Ab')" data-sharp="G#" data-flat="Ab">Ab</div>
+            <div class="key-black" style="left: 85.714%;" onclick="handleBlackKey('A#', 'Bb')" data-sharp="A#" data-flat="Bb">Bb</div>
         </div>
 
         <!-- RESULTADO -->
         <div id="result">
             <div style="color:var(--text-muted); text-align:center; padding-top: 15px;">Selecione ou digite um acorde acima.</div>
         </div>
+    </div>
+
+    <!-- RODAPÉ -->
+    <div class="footer">
+        Desenvolvido pelo professor Glauber Santiago — DAC/UFSCar<br>
+        <a href="http://servidores.ufscar.br/glauber/" target="_blank">servidores.ufscar.br/glauber/</a>
+        •
+        <a href="https://sites.google.com/view/glauberia" target="_blank">sites.google.com/view/glauberia</a>
     </div>
 
     <script>
@@ -340,8 +478,12 @@
         const letterPitches = [0, 2, 4, 5, 7, 9, 11];
         const ptBrNotes = { 'C': 'Dó', 'D': 'Ré', 'E': 'Mi', 'F': 'Fá', 'G': 'Sol', 'A': 'Lá', 'B': 'Si' };
 
-        // Fórmulas ordenadas da mais grave (Fundamental) para a mais aguda.
-        // O layout renderiza agora de baixo para cima.
+        const rootPitches = {
+            'C': 48, 'C#': 49, 'Db': 49, 'D': 50, 'D#': 51, 'Eb': 51, 'E': 52,
+            'F': 53, 'F#': 54, 'Gb': 54, 'G': 55, 'G#': 56, 'Ab': 56, 'A': 57,
+            'A#': 58, 'Bb': 58, 'B': 59, 'Cb': 59
+        };
+
         const formulas = {
             '': { name: 'Maior', intervals: [
                 {semis: 0, letters: 0, label: 'Fundamental (1J)'},
@@ -494,6 +636,36 @@
                 {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
                 {semis: 10, letters: 6, label: 'Sétima Menor (7m)'},
                 {semis: 14, letters: 1, label: 'Nona Maior (9M)'}
+            ]},
+            'aug': { name: 'Tríade Aumentada', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 8, letters: 4, label: 'Quinta Aumentada (5A)'}
+            ]},
+            'sus2': { name: 'Suspenso (2ª)', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 2, letters: 1, label: 'Segunda Maior (2M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'}
+            ]},
+            '6/9': { name: 'Maior 6/9', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 9, letters: 5, label: 'Sexta Maior (6M)'},
+                {semis: 14, letters: 1, label: 'Nona Maior (9M)'}
+            ]},
+            'augadd9': { name: 'Aumentada com 9ª Adicionada', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 4, letters: 2, label: 'Terça Maior (3M)'},
+                {semis: 8, letters: 4, label: 'Quinta Aumentada (5A)'},
+                {semis: 14, letters: 1, label: 'Nona Maior (9M)'}
+            ]},
+            'm6/9': { name: 'Menor 6/9', intervals: [
+                {semis: 0, letters: 0, label: 'Fundamental (1J)'},
+                {semis: 3, letters: 2, label: 'Terça Menor (3m)'},
+                {semis: 7, letters: 4, label: 'Quinta Justa (5J)'},
+                {semis: 9, letters: 5, label: 'Sexta Maior (6M)'},
+                {semis: 14, letters: 1, label: 'Nona Maior (9M)'}
             ]}
         };
 
@@ -520,6 +692,11 @@
 
         let currentRoot = '';
         let currentType = '';
+        let preferFlats = true; 
+        
+        // Variáveis do InverterFlux
+        let isInverseMode = false;
+        let savedType = '';
 
         // --- SISTEMA DE ÁUDIO (Web Audio API) ---
         let audioCtx;
@@ -529,7 +706,6 @@
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 
-                // Compressor master atua como um "limitador" de estúdio para evitar clipping
                 masterCompressor = audioCtx.createDynamicsCompressor();
                 masterCompressor.threshold.setValueAtTime(-10, audioCtx.currentTime);
                 masterCompressor.knee.setValueAtTime(15, audioCtx.currentTime);
@@ -544,50 +720,70 @@
             }
         }
 
+        function playSingleNote(intervalSemis) {
+            if (!currentRoot) return;
+            initAudio();
+
+            const baseMidi = rootPitches[currentRoot];
+            const midiNote = baseMidi + intervalSemis;
+            const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+            const now = audioCtx.currentTime;
+            
+            const osc = audioCtx.createOscillator();
+            const filter = audioCtx.createBiquadFilter(); 
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'triangle';
+            
+            filter.type = 'lowpass';
+            filter.frequency.value = 800; 
+            
+            osc.frequency.value = freq;
+            
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.5, now + 0.05); 
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5); 
+            
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(masterCompressor);
+            
+            osc.start(now);
+            osc.stop(now + 2.5);
+        }
+
         function playCurrentChord() {
             if (!currentRoot || !formulas[currentType]) return;
             initAudio();
 
             const formula = formulas[currentType];
             
-            // Notas base em MIDI para manter os acordes numa oitava agradável
-            // G, G#, A, A#, B e equivalentes subiram uma oitava (+12)
-            const rootPitches = {
-                'C': 48, 'C#': 49, 'Db': 49, 'D': 50, 'D#': 51, 'Eb': 51, 'E': 52,
-                'F': 53, 'F#': 54, 'Gb': 54, 'G': 55, 'G#': 56, 'Ab': 56, 'A': 57,
-                'A#': 58, 'Bb': 58, 'B': 59, 'Cb': 59
-            };
-
             const baseMidi = rootPitches[currentRoot];
             const now = audioCtx.currentTime;
-            const arpeggioDelay = 0.05; // 50ms de atraso entre cada nota (Efeito de dedilhado/arpejo)
+            const arpeggioDelay = 0.05; 
             
-            // Divide o volume máximo pelo número de notas do acorde para evitar que a soma estoure 1.0
             const peakGain = 0.6 / formula.intervals.length;
             
             formula.intervals.forEach((interval, index) => {
                 const midiNote = baseMidi + interval.semis;
                 const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
-                const noteStart = now + (index * arpeggioDelay); // Aplica o atraso baseado na ordem da nota
+                const noteStart = now + (index * arpeggioDelay); 
                 
                 const osc = audioCtx.createOscillator();
-                const filter = audioCtx.createBiquadFilter(); // Filtro para deixar o som mais aveludado
+                const filter = audioCtx.createBiquadFilter(); 
                 const gain = audioCtx.createGain();
                 
-                osc.type = 'triangle'; // Base do timbre
+                osc.type = 'triangle'; 
                 
-                // Configuração do filtro passa-baixa (corta agudos estridentes)
                 filter.type = 'lowpass';
-                filter.frequency.value = 800; // Ajustado para não abafar demais
+                filter.frequency.value = 800; 
                 
                 osc.frequency.value = freq;
                 
-                // Envelope ADSR suave (ataque rápido, decaimento longo)
                 gain.gain.setValueAtTime(0, noteStart);
-                gain.gain.linearRampToValueAtTime(peakGain, noteStart + 0.08); // Usa o peakGain dinâmico calculado
-                gain.gain.exponentialRampToValueAtTime(0.001, noteStart + 3.0); // Decay
+                gain.gain.linearRampToValueAtTime(peakGain, noteStart + 0.08); 
+                gain.gain.exponentialRampToValueAtTime(0.001, noteStart + 3.0); 
                 
-                // Conexões de áudio: Oscilador -> Filtro -> Volume -> Compressor (Master) -> Saída
                 osc.connect(filter);
                 filter.connect(gain);
                 gain.connect(masterCompressor);
@@ -636,27 +832,70 @@
         // CONTROLES DE INTERFACE
         // ==========================================
 
-        function setFromBtn(root, type) {
-            if (root !== null) currentRoot = root;
-            if (type !== null) currentType = type;
-            
-            if(!currentRoot && type !== null) currentRoot = 'C';
+        function toggleMode() {
+            isInverseMode = !isInverseMode;
+            let btn = document.getElementById('toggleModeBtn');
+            let typeSectionLabel = document.getElementById('type-section-label');
+            let typeBtns = document.getElementById('type-btns');
+            let inputField = document.getElementById('chordInput');
+            let pianoLabel = document.getElementById('piano-label');
 
-            document.getElementById('chordInput').value = currentRoot + currentType;
+            if (isInverseMode) {
+                btn.innerHTML = '🔄 NormalFlux';
+                btn.classList.add('inverse');
+                typeSectionLabel.style.display = 'none';
+                typeBtns.style.display = 'none';
+                inputField.placeholder = "Ex: C, Eb, F#...";
+                pianoLabel.innerText = "1. Escolha a Nota para Engenharia Reversa:";
+                
+                // Salva o tipo atual e zera
+                savedType = currentType;
+                currentType = ''; 
+            } else {
+                btn.innerHTML = '🔄 InverterFlux';
+                btn.classList.remove('inverse');
+                typeSectionLabel.style.display = 'block';
+                typeBtns.style.display = 'grid';
+                inputField.placeholder = "Ex: C7, Dó menor, F#m7b5...";
+                pianoLabel.innerText = "2. Nota Fundamental:";
+                
+                // Restaura o tipo
+                currentType = savedType;
+            }
+            
+            let typeDisplay = currentType === 'aug' ? '+' : currentType === 'augadd9' ? '+(add9)' : currentType === '6/9' ? '6(9)' : currentType === 'm6/9' ? 'm6(9)' : currentType;
+            inputField.value = isInverseMode ? currentRoot : currentRoot + typeDisplay;
+            
             render();
             updateActiveButtons();
-            playCurrentChord(); // Toca o acorde automaticamente
         }
 
-        // Lógica de alternância (Toggle) para as teclas pretas
+        function setFromBtn(root, type) {
+            if (root !== null) currentRoot = root;
+            if (!isInverseMode && type !== null) currentType = type;
+            
+            if(!currentRoot && !isInverseMode && type !== null) currentRoot = 'C';
+
+            let typeDisplay = currentType === 'aug' ? '+' : currentType === 'augadd9' ? '+(add9)' : currentType === '6/9' ? '6(9)' : currentType === 'm6/9' ? 'm6(9)' : currentType;
+            document.getElementById('chordInput').value = isInverseMode ? currentRoot : currentRoot + typeDisplay;
+            
+            render();
+            updateActiveButtons();
+            
+            if (!isInverseMode) {
+                playCurrentChord();
+            } else {
+                playSingleNote(0); // Em InverterFlux, toca apenas a nota selecionada
+            }
+        }
+
         function handleBlackKey(sharp, flat) {
-            // Se a fundamental atual já é o sustenido, ao clicar de novo vai para o bemol
-            if (currentRoot === sharp) {
-                setFromBtn(flat, null);
+            if (currentRoot === sharp || currentRoot === flat) {
+                preferFlats = !preferFlats;
+                setFromBtn(preferFlats ? flat : sharp, null);
             } 
-            // Caso contrário (primeira clicagem ou se estava no bemol), vai para o sustenido
             else {
-                setFromBtn(sharp, null);
+                setFromBtn(preferFlats ? flat : sharp, null);
             }
         }
 
@@ -664,7 +903,7 @@
             let val = this.value.trim().toLowerCase().replace(/\s+/g, '');
             if(!val) {
                 currentRoot = '';
-                currentType = '';
+                if (!isInverseMode) currentType = '';
                 render();
                 updateActiveButtons();
                 return;
@@ -685,33 +924,45 @@
             if(rootFound) {
                 currentRoot = rootFound;
                 
-                if(restFound === '' || restFound === 'maior' || restFound === 'maj') currentType = '';
-                else if(restFound === 'm' || restFound === 'menor' || restFound === 'min' || restFound === '-') currentType = 'm';
-                else if(restFound === 'm(7m)' || restFound === 'm7m' || restFound === 'minmaj7') currentType = 'm7M';
-                else if(restFound === '7') currentType = '7';
-                else if(restFound === '7m' || restFound === 'maj7' || restFound === 'm7m') currentType = '7M';
-                else if(restFound === 'm7' || restFound === 'min7' || restFound === '-7') currentType = 'm7';
-                else if(restFound === 'dim' || restFound === '°') currentType = 'dim';
-                else if(restFound === 'dim7' || restFound === '°7') currentType = 'dim7';
-                else if(restFound === 'm7b5' || restFound === 'ø' || restFound === 'm7(b5)') currentType = 'm7b5';
-                else if(restFound === '6') currentType = '6';
-                else if(restFound === 'm6' || restFound === 'min6' || restFound === '-6') currentType = 'm6';
-                else if(restFound === '13') currentType = '13';
-                else if(restFound === 'sus4' || restFound === 'sus') currentType = 'sus4';
-                else if(restFound === '7sus4' || restFound === '7sus') currentType = '7sus4';
-                else if(restFound === '9') currentType = '9';
-                else if(restFound === 'add9') currentType = 'add9';
-                else if(restFound === '7b9' || restFound === 'b9' || restFound === '-9' || restFound === '7(b9)') currentType = '7b9';
-                else if(restFound === '7#9' || restFound === '#9' || restFound === '+9' || restFound === '7(#9)') currentType = '7#9';
-                else if(restFound === '7b13' || restFound === 'b13' || restFound === '-13' || restFound === '7(b13)') currentType = '7b13';
-                else if(restFound === 'm11' || restFound === 'min11' || restFound === '-11') currentType = 'm11';
-                else if(restFound === '7m#11' || restFound === '7m(#11)' || restFound === 'maj7#11' || restFound === 'maj7(#11)') currentType = '7M#11';
-                else if(restFound === '4' || restFound === 'add4') currentType = '4';
-                else if(restFound === 'm7b511' || restFound === 'm7(b5)11' || restFound === 'ø11' || restFound === 'ø(11)') currentType = 'm7b511';
-                else if(restFound === 'm9' || restFound === 'min9' || restFound === '-9') currentType = 'm9';
-                else {
-                    document.getElementById('result').innerHTML = '<div class="error">Complemento não suportado.</div>';
-                    return;
+                if(currentRoot.includes('b')) preferFlats = true;
+                if(currentRoot.includes('#')) preferFlats = false;
+
+                if (!isInverseMode) {
+                    if(restFound === '' || restFound === 'maior' || restFound === 'maj') currentType = '';
+                    else if(restFound === 'm' || restFound === 'menor' || restFound === 'min' || restFound === '-') currentType = 'm';
+                    else if(restFound === 'm(7m)' || restFound === 'm7m' || restFound === 'minmaj7') currentType = 'm7M';
+                    else if(restFound === '7') currentType = '7';
+                    else if(restFound === '7m' || restFound === 'maj7' || restFound === 'm7m') currentType = '7M';
+                    else if(restFound === 'm7' || restFound === 'min7' || restFound === '-7') currentType = 'm7';
+                    else if(restFound === 'dim' || restFound === '°') currentType = 'dim';
+                    else if(restFound === 'dim7' || restFound === '°7') currentType = 'dim7';
+                    else if(restFound === 'm7b5' || restFound === 'ø' || restFound === 'm7(b5)') currentType = 'm7b5';
+                    else if(restFound === '6') currentType = '6';
+                    else if(restFound === 'm6' || restFound === 'min6' || restFound === '-6') currentType = 'm6';
+                    else if(restFound === '13') currentType = '13';
+                    else if(restFound === 'sus4' || restFound === 'sus') currentType = 'sus4';
+                    else if(restFound === '7sus4' || restFound === '7sus') currentType = '7sus4';
+                    else if(restFound === '9') currentType = '9';
+                    else if(restFound === 'add9') currentType = 'add9';
+                    else if(restFound === '7b9' || restFound === 'b9' || restFound === '-9' || restFound === '7(b9)') currentType = '7b9';
+                    else if(restFound === '7#9' || restFound === '#9' || restFound === '+9' || restFound === '7(#9)') currentType = '7#9';
+                    else if(restFound === '7b13' || restFound === 'b13' || restFound === '-13' || restFound === '7(b13)') currentType = '7b13';
+                    else if(restFound === 'm11' || restFound === 'min11' || restFound === '-11') currentType = 'm11';
+                    else if(restFound === '7m#11' || restFound === '7m(#11)' || restFound === 'maj7#11' || restFound === 'maj7(#11)') currentType = '7M#11';
+                    else if(restFound === '4' || restFound === 'add4') currentType = '4';
+                    else if(restFound === 'm7b511' || restFound === 'm7(b5)11' || restFound === 'ø11' || restFound === 'ø(11)') currentType = 'm7b511';
+                    else if(restFound === 'm9' || restFound === 'min9' || restFound === '-9') currentType = 'm9';
+                    else if(restFound === 'aug' || restFound === '+' || restFound === 'aum') currentType = 'aug';
+                    else if(restFound === 'sus2') currentType = 'sus2';
+                    else if(restFound === '6/9' || restFound === '69' || restFound === '6(9)') currentType = '6/9';
+                    else if(restFound === 'augadd9' || restFound === '+add9' || restFound === 'aug9' || restFound === '+9' || restFound === '+(add9)') currentType = 'augadd9';
+                    else if(restFound === 'm6/9' || restFound === 'm69' || restFound === 'm6(9)') currentType = 'm6/9';
+                    else {
+                        document.getElementById('result').innerHTML = '<div class="error">Complemento não suportado.</div>';
+                        return;
+                    }
+                } else {
+                    currentType = ''; // No modo inverso ignoramos complementos
                 }
                 render();
             } else {
@@ -721,22 +972,48 @@
         });
 
         function render() {
+            let resultDiv = document.getElementById('result');
+
             if(!currentRoot) {
-                document.getElementById('result').innerHTML = '<div style="color:var(--text-muted); text-align:center; padding-top: 15px;">Selecione ou digite um acorde acima.</div>';
+                resultDiv.style.backgroundColor = '#fdf2f2';
+                resultDiv.style.borderLeftColor = 'var(--primary)';
+                let msg = isInverseMode ? 'uma nota' : 'um acorde';
+                resultDiv.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding-top: 15px;">Selecione ou digite ${msg} acima.</div>`;
                 return;
             }
 
+            if (isInverseMode) {
+                renderInverse(resultDiv);
+            } else {
+                renderNormal(resultDiv);
+            }
+        }
+
+        // =====================================
+        // FLUXO NORMAL (Mostra o Acorde)
+        // =====================================
+        function renderNormal(resultDiv) {
             let formula = formulas[currentType];
+            
+            let hasMinorThird = formula.intervals.some(interval => interval.semis === 3 && interval.letters === 2);
+            if (hasMinorThird) {
+                resultDiv.style.backgroundColor = '#e8f5e9'; 
+                resultDiv.style.borderLeftColor = '#4caf50'; 
+            } else {
+                resultDiv.style.backgroundColor = '#e3f2fd'; 
+                resultDiv.style.borderLeftColor = '#2196f3'; 
+            }
+
+            let typeDisplay = currentType === 'aug' ? '+' : currentType === 'augadd9' ? '+(add9)' : currentType === '6/9' ? '6(9)' : currentType === 'm6/9' ? 'm6(9)' : currentType;
             let html = `
                 <div class="chord-title">
-                    ${currentRoot}${currentType} 
+                    ${currentRoot}${typeDisplay} 
                     <span class="chord-subtitle">(${formula.name})</span>
                     <button class="play-btn" onclick="playCurrentChord()">🔊 Tocar</button>
                 </div>
                 <div class="intervals-container">
             `;
 
-            // DE BAIXO PARA CIMA: Revertemos o Array para colocar a Fundamental embaixo e a nota mais aguda em cima
             let reversedIntervals = [...formula.intervals].reverse();
 
             reversedIntervals.forEach((interval) => {
@@ -744,7 +1021,7 @@
                 let formattedDisplay = formatNoteBR(exactNote);
 
                 html += `
-                    <div class="interval-row">
+                    <div class="interval-row" onclick="playSingleNote(${interval.semis})" title="Clique para tocar a nota">
                         <span class="interval-name">${interval.label}</span>
                         <span class="interval-note">${formattedDisplay}</span>
                     </div>
@@ -752,34 +1029,123 @@
             });
 
             html += `</div>`;
-            document.getElementById('result').innerHTML = html;
+            resultDiv.innerHTML = html;
+        }
+
+        // =====================================
+        // FLUXO INVERSO (Funções da Nota)
+        // =====================================
+        function renderInverse(resultDiv) {
+            resultDiv.style.backgroundColor = '#f4f4f9'; 
+            resultDiv.style.borderLeftColor = '#1565c0'; 
+
+            let targetNote = currentRoot;
+            let resultsByFunction = {};
+            
+            // Testa todas as fundamentais padrão (inclui os acidentes)
+            const allRoots = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B'];
+
+            allRoots.forEach(testRoot => {
+                Object.keys(formulas).forEach(type => {
+                    let formula = formulas[type];
+                    formula.intervals.forEach(interval => {
+                        let noteSpelling = getCorrectNoteSpelling(testRoot, interval.semis, interval.letters);
+                        
+                        // Combinamos as notas por grafia (spelling) musical exata.
+                        if (noteSpelling === targetNote) {
+                            if (!resultsByFunction[interval.label]) {
+                                resultsByFunction[interval.label] = [];
+                            }
+                            let typeDisplay = type === 'aug' ? '+' : type === 'augadd9' ? '+(add9)' : type === '6/9' ? '6(9)' : type === 'm6/9' ? 'm6(9)' : type;
+                            let chordName = testRoot + typeDisplay;
+                            if(!resultsByFunction[interval.label].includes(chordName)) {
+                                resultsByFunction[interval.label].push(chordName);
+                            }
+                        }
+                    });
+                });
+            });
+
+            let html = `
+                <div class="chord-title" style="border-bottom-color: rgba(21, 101, 192, 0.2);">
+                    Engenharia Reversa da nota ${targetNote}
+                    <button class="play-btn" style="background:#1565c0;" onclick="playSingleNote(0)">🔊 Tocar Nota</button>
+                </div>
+                <div style="font-size:14px; color:var(--text-muted); margin-bottom:15px;">
+                    A nota <strong>${formatNoteBR(targetNote)}</strong> exerce as seguintes funções dentro destes acordes (grafia exata):
+                </div>
+            `;
+
+            let labels = Object.keys(resultsByFunction);
+            if(labels.length === 0) {
+                html += `<div style="text-align:center; color:#666;">Nenhum acorde encontrado com esta grafia exata.</div>`;
+            } else {
+                // Ordena os intervalos para aparecerem do mais grave (1J) para o mais agudo na listagem
+                let sortedLabels = labels.sort((a, b) => {
+                    let getSemis = (lbl) => {
+                        for(let t in formulas) {
+                            let i = formulas[t].intervals.find(x => x.label === lbl);
+                            if(i) return i.semis;
+                        }
+                        return 0;
+                    };
+                    return getSemis(a) - getSemis(b);
+                });
+
+                sortedLabels.forEach(label => {
+                    html += `
+                        <div class="function-group">
+                            <h4>Como ${label}</h4>
+                            <div class="chord-tags">
+                                ${resultsByFunction[label].map(c => `<span class="chord-tag">${c}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            resultDiv.innerHTML = html;
         }
 
         function updateActiveButtons() {
-            // Teclas brancas
             document.querySelectorAll('.key-white').forEach(btn => {
                 btn.classList.toggle('active', btn.getAttribute('data-root') === currentRoot);
             });
             
-            // Teclas pretas
             document.querySelectorAll('.key-black').forEach(btn => {
                 let sharp = btn.getAttribute('data-sharp');
                 let flat = btn.getAttribute('data-flat');
                 
                 if (currentRoot === sharp || currentRoot === flat) {
                     btn.classList.add('active');
-                    btn.innerText = currentRoot; // Mostra # ou b na tecla baseado no selecionado
+                    btn.innerText = currentRoot;
                 } else {
                     btn.classList.remove('active');
-                    btn.innerText = sharp; // Retorna para visual de sustenido quando inativo (dica visual de 1º clique)
+                    btn.innerText = preferFlats ? flat : sharp; 
                 }
             });
 
-            // Botões de Tipo
             document.querySelectorAll('#type-btns button').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-type') === currentType);
+                btn.classList.toggle('active', !isInverseMode && btn.getAttribute('data-type') === currentType);
             });
         }
+
+        function initButtonColors() {
+            document.querySelectorAll('#type-btns button').forEach(btn => {
+                let type = btn.getAttribute('data-type');
+                let formula = formulas[type];
+                if(formula) {
+                    let hasMinorThird = formula.intervals.some(interval => interval.semis === 3 && interval.letters === 2);
+                    if (hasMinorThird) {
+                        btn.classList.add('minor');
+                    } else {
+                        btn.classList.add('major'); 
+                    }
+                }
+            });
+        }
+        
+        initButtonColors();
     </script>
 </body>
 </html>
